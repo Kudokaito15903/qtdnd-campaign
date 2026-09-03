@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: demo
+
+  datasource:
+    # Supabase connection uses standard postgresql driver
+    url: jdbc:postgresql://${DB_HOST:aws-0-ap-northeast-1.pooler.supabase.com}:${DB_PORT:5432}/${DB_NAME:postgres}
+    username: postgres.fnlpfcleuawvtkpleyzp
+    password: 15903Kaitou
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: kudokaito15903@gmail.com
+    password: bylqyvdcnoalwbif
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
