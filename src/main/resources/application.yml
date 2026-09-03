@@ -2,6 +2,10 @@ spring:
   application:
     name: demo
 
+admin:
+  username: ${ADMIN_USER:admin}
+  password: ${ADMIN_PASS:admin123}
+
   datasource:
     # Supabase connection uses standard postgresql driver
     url: jdbc:postgresql://${DB_HOST:aws-0-ap-northeast-1.pooler.supabase.com}:${DB_PORT:5432}/${DB_NAME:postgres}

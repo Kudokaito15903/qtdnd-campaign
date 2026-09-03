@@ -1,12 +1,25 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
-import { LayoutDashboard, Users, FileText, Send, Mail } from 'lucide-react'
+import { LayoutDashboard, Users, FileText, Send, LogOut } from 'lucide-react'
+import { useState } from 'react'
 import Dashboard from './pages/Dashboard'
 import Customers from './pages/Customers'
 import Templates from './pages/Templates'
 import Campaigns from './pages/Campaigns'
+import Login from './pages/Login'
 import './index.css'
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'))
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    setIsAuthenticated(false)
+  }
+
+  if (!isAuthenticated) {
+    return <Login onLogin={() => setIsAuthenticated(true)} />
+  }
+
   return (
     <BrowserRouter>
       <div className="app-layout">
@@ -19,7 +32,7 @@ function App() {
             Chi nhánh Thái Bình
           </div>
           
-          <nav className="nav-links">
+          <nav className="nav-links" style={{ flex: 1 }}>
             <NavLink to="/" className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
               <LayoutDashboard size={20} />
               Tổng Quan
@@ -37,6 +50,17 @@ function App() {
               Khách Hàng
             </NavLink>
           </nav>
+
+          <div style={{ padding: '24px 32px', borderTop: '1px solid var(--border-color)' }}>
+            <button 
+              onClick={handleLogout}
+              className="nav-link" 
+              style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger-color)', padding: 0 }}
+            >
+              <LogOut size={20} />
+              Đăng Xuất
+            </button>
+          </div>
         </aside>
 
         <main className="main-content">
