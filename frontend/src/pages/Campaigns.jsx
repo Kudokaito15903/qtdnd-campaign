@@ -8,13 +8,15 @@ export default function Campaigns() {
   const [isLoading, setIsLoading] = useState(true)
   const [formData, setFormData] = useState({ name: '', templateId: '', scheduledAt: '' })
 
-  const fetchCampaigns = () => {
-    setIsLoading(true)
+  const fetchCampaigns = (isBackground = false) => {
+    if (!isBackground) setIsLoading(true)
     fetch('/api/campaigns')
       .then(res => res.json())
       .then(data => setCampaigns(data))
       .catch(err => console.error(err))
-      .finally(() => setIsLoading(false))
+      .finally(() => {
+        if (!isBackground) setIsLoading(false)
+      })
   }
 
   const fetchTemplates = () => {
@@ -27,7 +29,8 @@ export default function Campaigns() {
   useEffect(() => {
     fetchCampaigns()
     fetchTemplates()
-    const interval = setInterval(fetchCampaigns, 5000)
+    // Gọi ngầm mỗi 10 giây để cập nhật trạng thái (Đang gửi -> Đã xong) mà không làm nháy màn hình
+    const interval = setInterval(() => fetchCampaigns(true), 10000)
     return () => clearInterval(interval)
   }, [])
 
