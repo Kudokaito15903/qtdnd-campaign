@@ -19,10 +19,10 @@ spring:
     show-sql: true
 
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: kudokaito15903@gmail.com
-    password: bylqyvdcnoalwbif
+    host: ${SMTP_HOST:smtp-relay.brevo.com}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:kudokaito15903@gmail.com}
+    password: ${SMTP_PASSWORD:bylqyvdcnoalwbif}
     properties:
       mail:
         smtp:
