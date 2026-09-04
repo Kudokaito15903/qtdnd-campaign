@@ -52,10 +52,17 @@ export default function Templates() {
   }
 
   const openEditModal = (t) => {
-    setFormData({ name: t.name, subject: t.subject, htmlContent: t.htmlContent })
-    setEditingId(t.id)
     setIsEditing(true)
     setShowModal(true)
+    
+    // Khi nhấn Sửa, gọi API để lấy htmlContent trọn vẹn
+    fetch(`/api/campaigns/templates/${t.id}`)
+      .then(res => res.json())
+      .then(data => {
+        setFormData({ name: data.name, subject: data.subject, htmlContent: data.htmlContent })
+        setEditingId(data.id)
+      })
+      .catch(err => console.error(err))
   }
 
   const closeModal = () => {
@@ -106,7 +113,7 @@ export default function Templates() {
               Tiêu đề: {t.subject}
             </p>
             <div style={{ background: 'rgba(0,0,0,0.03)', border: '1px solid var(--border-color)', padding: '12px', borderRadius: '8px', fontSize: '12px', maxHeight: '100px', overflow: 'hidden', flex: 1 }}>
-              <div dangerouslySetInnerHTML={{ __html: t.htmlContent.substring(0, 150) + '...' }} />
+              <div dangerouslySetInnerHTML={{ __html: (t.previewHtml || '') + '...' }} />
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '12px' }}>
               <button 

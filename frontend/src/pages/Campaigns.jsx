@@ -62,27 +62,31 @@ export default function Campaigns() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Find the selected template to get its subject and htmlContent
     const selectedTemplate = templates.find(t => t.id === parseInt(formData.templateId))
     if (!selectedTemplate) return
 
     const isScheduled = formData.scheduledAt !== ''
     
-    fetch('/api/campaigns', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: formData.name,
-        subject: selectedTemplate.subject,
-        htmlContent: selectedTemplate.htmlContent,
-        status: isScheduled ? 'SCHEDULED' : 'CREATED',
-        scheduledAt: isScheduled ? formData.scheduledAt : null
-      })
-    })
-      .then(() => {
-        setShowModal(false)
-        setFormData({ name: '', templateId: '', scheduledAt: '' })
-        fetchCampaigns()
+    fetch(`/api/campaigns/templates/${selectedTemplate.id}`)
+      .then(res => res.json())
+      .then(fullTemplate => {
+        fetch('/api/campaigns', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.name,
+            subject: fullTemplate.subject,
+            htmlContent: fullTemplate.htmlContent,
+            status: isScheduled ? 'SCHEDULED' : 'CREATED',
+            scheduledAt: isScheduled ? formData.scheduledAt : null
+          })
+        })
+          .then(() => {
+            setShowModal(false)
+            setFormData({ name: '', templateId: '', scheduledAt: '' })
+            fetchCampaigns()
+          })
+          .catch(err => console.error(err))
       })
       .catch(err => console.error(err))
   }

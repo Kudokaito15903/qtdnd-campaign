@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.CampaignSummaryDto;
+import com.example.demo.dto.TemplateSummaryDto;
 import com.example.demo.entity.EmailCampaign;
 import com.example.demo.entity.EmailTemplate;
 import com.example.demo.repository.EmailCampaignRepository;
@@ -21,8 +23,8 @@ public class EmailCampaignController {
     private final EmailCampaignService campaignService;
 
     @GetMapping
-    public List<EmailCampaign> getAllCampaigns() {
-        return campaignRepository.findAll();
+    public List<CampaignSummaryDto> getAllCampaigns() {
+        return campaignRepository.findCampaignSummaries();
     }
 
     @PostMapping
@@ -44,8 +46,13 @@ public class EmailCampaignController {
     }
 
     @GetMapping("/templates")
-    public List<EmailTemplate> getAllTemplates() {
-        return templateRepository.findAll();
+    public List<TemplateSummaryDto> getAllTemplates() {
+        return templateRepository.findTemplateSummaries();
+    }
+
+    @GetMapping("/templates/{id}")
+    public EmailTemplate getTemplateById(@PathVariable Long id) {
+        return templateRepository.findById(id).orElseThrow();
     }
 
     @PostMapping("/templates")
