@@ -1,6 +1,10 @@
 spring:
   application:
     name: demo
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
   datasource:
     # Supabase connection uses standard postgresql driver
@@ -36,3 +40,7 @@ spring:
 admin:
   username: ${ADMIN_USER:admin}
   password: ${ADMIN_PASS:admin123}
+
+supabase:
+  url: https://fnlpfcleuawvtkpleyzp.supabase.co
+  key: ${SUPABASE_KEY}

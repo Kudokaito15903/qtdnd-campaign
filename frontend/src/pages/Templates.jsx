@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { Plus, LayoutTemplate, X, Trash2, Pencil } from 'lucide-react'
 import ReactQuill from 'react-quill-new'
 import 'react-quill-new/dist/quill.snow.css'
@@ -10,16 +10,55 @@ export default function Templates() {
   const [isEditing, setIsEditing] = useState(false)
   const [editingId, setEditingId] = useState(null)
   const [formData, setFormData] = useState({ name: '', subject: '', htmlContent: '' })
+  const quillRef = useRef(null)
 
-  const modules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{'list': 'ordered'}, {'list': 'bullet'}],
-      ['link', 'image'],
-      ['clean']
-    ],
+  const imageHandler = () => {
+    const input = document.createElement('input')
+    input.setAttribute('type', 'file')
+    input.setAttribute('accept', 'image/*')
+    input.click()
+
+    input.onchange = async () => {
+      const file = input.files[0]
+      if (file) {
+        const uploadData = new FormData()
+        uploadData.append('file', file)
+
+        try {
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            body: uploadData
+          })
+          const data = await res.json()
+          if (data.url) {
+            const quill = quillRef.current.getEditor()
+            const range = quill.getSelection(true)
+            quill.insertEmbed(range.index, 'image', data.url)
+          } else {
+            alert('Lỗi upload ảnh: ' + (data.error || 'Unknown error'))
+          }
+        } catch (err) {
+          console.error(err)
+          alert('Không thể upload ảnh, vui lòng thử lại!')
+        }
+      }
+    }
   }
+
+  const modules = useMemo(() => ({
+    toolbar: {
+      container: [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+        [{'list': 'ordered'}, {'list': 'bullet'}],
+        ['link', 'image'],
+        ['clean']
+      ],
+      handlers: {
+        image: imageHandler
+      }
+    }
+  }), [])
 
   const fetchTemplates = () => {
     setIsLoading(true)
@@ -176,6 +215,7 @@ export default function Templates() {
                 <label className="form-label">Nội dung Email</label>
                 <div style={{ background: '#fff', borderRadius: '8px', color: '#000' }}>
                   <ReactQuill 
+                    ref={quillRef}
                     theme="snow"
                     value={formData.htmlContent} 
                     onChange={v => setFormData({...formData, htmlContent: v})}
