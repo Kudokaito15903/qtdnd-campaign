@@ -98,7 +98,13 @@ public class EmailCampaignWorker {
                         recipient.setSentAt(LocalDateTime.now());
                     } catch (Exception e) {
                         log.error("Failed to send email to {}", recipient.getEmail(), e);
-                        recipient.setStatus("FAILED");
+                        int retries = recipient.getRetryCount() != null ? recipient.getRetryCount() : 0;
+                        if (retries >= 3) {
+                            recipient.setStatus("FAILED");
+                        } else {
+                            recipient.setRetryCount(retries + 1);
+                            // Giữ nguyên trạng thái PENDING để lần sau quét lại
+                        }
                         recipient.setErrorMessage(e.getMessage());
                     }
                     recipientRepository.save(recipient);

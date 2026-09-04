@@ -33,10 +33,7 @@ public class EmailCampaignService {
         }
 
         // Get all customers who consented to marketing and have not unsubscribed
-        List<Customer> targetCustomers = customerRepository.findAll().stream()
-                .filter(c -> c.getMarketingConsent() != null && c.getMarketingConsent())
-                .filter(c -> c.getUnsubscribed() == null || !c.getUnsubscribed())
-                .collect(Collectors.toList());
+        List<Customer> targetCustomers = customerRepository.findEligibleForCampaign();
 
         // Save recipients in bulk
         List<CampaignRecipient> recipients = new java.util.ArrayList<>();
