@@ -85,6 +85,7 @@ public class EmailCampaignWorker {
                                     .replace("{{customerName}}", customer.getName() != null ? customer.getName() : "Khách hàng");
                             
                             emailSenderService.send(recipient.getEmail(), campaign.getSubject(), personalizedHtml);
+                            log.info("Gửi email thành công tới: {}", recipient.getEmail());
                         }
                         
                         recipient.setStatus("SENT");

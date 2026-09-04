@@ -38,15 +38,17 @@ public class EmailCampaignService {
                 .filter(c -> c.getUnsubscribed() == null || !c.getUnsubscribed())
                 .collect(Collectors.toList());
 
-        // Save recipients
+        // Save recipients in bulk
+        List<CampaignRecipient> recipients = new java.util.ArrayList<>();
         for (Customer customer : targetCustomers) {
             CampaignRecipient recipient = new CampaignRecipient();
             recipient.setCampaignId(campaign.getId());
             recipient.setCustomerId(customer.getId());
             recipient.setEmail(customer.getEmail());
             recipient.setStatus("PENDING");
-            recipientRepository.save(recipient);
+            recipients.add(recipient);
         }
+        recipientRepository.saveAll(recipients);
 
         campaign.setStatus("PROCESSING");
         campaignRepository.save(campaign);

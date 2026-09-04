@@ -8,6 +8,9 @@ spring:
     username: postgres.fnlpfcleuawvtkpleyzp
     password: 15903Kaitou
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
 
   jpa:
     hibernate:
@@ -20,9 +23,9 @@ spring:
 
   mail:
     host: ${SMTP_HOST:smtp-relay.brevo.com}
-    port: ${SMTP_PORT:587}
-    username: ${SMTP_USERNAME:kudokaito15903@gmail.com}
-    password: ${SMTP_PASSWORD:bylqyvdcnoalwbif}
+    port: ${SMTP_PORT:2525}
+    username: ${SMTP_USERNAME:b7c107001@smtp-brevo.com}
+    password: ${SMTP_PASSWORD:nhap_mat_khau_brevo_cua_ban_vao_day}
     properties:
       mail:
         smtp:

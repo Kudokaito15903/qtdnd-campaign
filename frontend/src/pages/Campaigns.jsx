@@ -8,14 +8,14 @@ export default function Campaigns() {
   const [isLoading, setIsLoading] = useState(true)
   const [formData, setFormData] = useState({ name: '', templateId: '', scheduledAt: '' })
 
-  const fetchCampaigns = (isBackground = false) => {
-    if (!isBackground) setIsLoading(true)
+  const fetchCampaigns = () => {
+    setIsLoading(true)
     fetch('/api/campaigns')
       .then(res => res.json())
       .then(data => setCampaigns(data))
       .catch(err => console.error(err))
       .finally(() => {
-        if (!isBackground) setIsLoading(false)
+        setIsLoading(false)
       })
   }
 
@@ -28,11 +28,16 @@ export default function Campaigns() {
 
   useEffect(() => {
     fetchCampaigns()
-    fetchTemplates()
-    // Gọi ngầm mỗi 10 giây để cập nhật trạng thái (Đang gửi -> Đã xong) mà không làm nháy màn hình
-    const interval = setInterval(() => fetchCampaigns(true), 10000)
-    return () => clearInterval(interval)
+    // Không tải Templates ở đây nữa để tránh nặng mạng (4.9MB)
+    // Không dùng setInterval nữa để tránh spam API
   }, [])
+
+  const handleOpenModal = () => {
+    if (templates.length === 0) {
+      fetchTemplates()
+    }
+    setShowModal(true)
+  }
 
   const startCampaign = (id) => {
     fetch(`/api/campaigns/${id}/start`, { method: 'POST' })
@@ -84,10 +89,15 @@ export default function Campaigns() {
           <h1>Chiến Dịch</h1>
           <p className="subtitle" style={{ marginBottom: 0 }}>Quản lý và khởi chạy các chiến dịch gửi email</p>
         </div>
-        <button className="button button-primary" onClick={() => setShowModal(true)}>
-          <Plus size={18} />
-          Tạo Chiến Dịch
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button className="button button-secondary" onClick={fetchCampaigns} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            Làm mới
+          </button>
+          <button className="button button-primary" onClick={handleOpenModal}>
+            <Plus size={18} />
+            Tạo Chiến Dịch
+          </button>
+        </div>
       </div>
 
       <div className="glass-panel table-container">
