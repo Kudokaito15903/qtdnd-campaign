@@ -67,9 +67,15 @@ public class EmailCampaignWorker {
             // Check if there are any recipients left at all (maybe all sent or failed)
             long remaining = recipientRepository.countByCampaignIdAndStatus(campaign.getId(), "PENDING");
             if (remaining == 0) {
-                campaign.setStatus("COMPLETED");
+                long failedCount = recipientRepository.countByCampaignIdAndStatus(campaign.getId(), "FAILED");
+                if (failedCount > 0) {
+                    campaign.setStatus("FAILED");
+                    log.info("Campaign {} marked as FAILED ({} failed recipients)", campaign.getId(), failedCount);
+                } else {
+                    campaign.setStatus("COMPLETED");
+                    log.info("Campaign {} marked as COMPLETED", campaign.getId());
+                }
                 campaignRepository.save(campaign);
-                log.info("Campaign {} marked as COMPLETED", campaign.getId());
             }
             return;
         }

@@ -40,9 +40,14 @@ export default function Campaigns() {
   }
 
   const startCampaign = (id) => {
+    setCampaigns(campaigns.map(c => c.id === id ? { ...c, status: 'PROCESSING' } : c))
+
     fetch(`/api/campaigns/${id}/start`, { method: 'POST' })
       .then(() => fetchCampaigns())
-      .catch(err => console.error(err))
+      .catch(err => {
+        console.error(err)
+        fetchCampaigns() 
+      })
   }
 
   const handleDelete = (id, name) => {
@@ -142,11 +147,13 @@ export default function Campaigns() {
                     c.status === 'COMPLETED' ? 'badge-success' : 
                     c.status === 'PROCESSING' ? 'badge-info' : 
                     c.status === 'SCHEDULED' ? 'badge-warning' :
+                    c.status === 'FAILED' ? 'badge-danger' :
                     'badge-warning'
                   }`} style={c.status === 'SCHEDULED' ? { backgroundColor: 'rgba(168, 85, 247, 0.2)', color: '#d8b4fe', borderColor: 'rgba(168, 85, 247, 0.3)' } : {}}>
                     {c.status === 'COMPLETED' ? 'Đã Xong' : 
                      c.status === 'PROCESSING' ? 'Đang Gửi' : 
-                     c.status === 'SCHEDULED' ? 'Đã Lên Lịch' : 'Mới Tạo'}
+                     c.status === 'SCHEDULED' ? 'Đã Lên Lịch' : 
+                     c.status === 'FAILED' ? 'Có Lỗi' : 'Mới Tạo'}
                   </span>
                 </td>
                 <td>

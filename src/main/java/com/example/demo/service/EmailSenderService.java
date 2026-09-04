@@ -31,7 +31,7 @@ public class EmailSenderService {
         Pattern pattern = Pattern.compile("src=[\"']data:image/([^;]+);base64,([^\"']+)[\"']");
         Matcher matcher = pattern.matcher(html);
         StringBuffer sb = new StringBuffer();
-        
+
         List<InlineImage> inlineImages = new ArrayList<>();
         int counter = 0;
 
@@ -39,10 +39,10 @@ public class EmailSenderService {
             String extension = matcher.group(1);
             String base64Data = matcher.group(2);
             String cid = "img_" + counter;
-            
+
             // Thay thế src bằng cid
             matcher.appendReplacement(sb, "src=\"cid:" + cid + "\"");
-            
+
             try {
                 byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
                 inlineImages.add(new InlineImage(cid, decodedBytes, "image/" + extension));
@@ -52,7 +52,7 @@ public class EmailSenderService {
             counter++;
         }
         matcher.appendTail(sb);
-        
+
         // Cài đặt nội dung HTML đã thay đổi src thành cid
         helper.setText(sb.toString(), true);
 
